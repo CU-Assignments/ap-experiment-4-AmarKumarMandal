@@ -1,0 +1,32 @@
+import heapq
+
+class Solution(object):
+    def getSkyline(self, buildings):
+        """
+        :type buildings: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        events = []
+        
+        for left, right, height in buildings:
+            events.append((left, -height, right))  
+            events.append((right, 0, None))  
+        
+        events.sort()  
+        result = []
+        max_heap = [(0, float("inf"))] 
+        prev_max_height = 0  
+        
+        for x, neg_height, right in events:
+            if neg_height != 0:
+                heapq.heappush(max_heap, (neg_height, right))
+            while max_heap[0][1] <= x:
+                heapq.heappop(max_heap)
+            
+            current_max_height = -max_heap[0][0]
+            
+            if current_max_height != prev_max_height:
+                result.append([x, current_max_height])
+                prev_max_height = current_max_height
+        
+        return result
